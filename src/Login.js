@@ -66,7 +66,7 @@ function Login(props) {
 const handleLogin = () => {
   setIsLoading(true);
   axios
-    .post('http://10.0.2.2:8000/auth/login', {
+    .post('https://glorious-cow-hospital-gown.cyclic.app/auth/login', {
       email: email,
       password: password,
     })

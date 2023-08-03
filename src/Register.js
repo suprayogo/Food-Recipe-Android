@@ -80,7 +80,7 @@ function Register(props) {
       return;
     }
     axios
-    .post('http://10.0.2.2:8000/auth/register', {
+    .post('https://glorious-cow-hospital-gown.cyclic.app/auth/register', {
         email: email,
         password: password,
         fullname: fullname,

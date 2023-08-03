@@ -49,7 +49,8 @@ function Home(props) {
   // Custom function to fetch recipes
   const fetchRecipes = async () => {
     try {
-      const response = await axios.get('http://10.0.2.2:8000/recipes');
+     
+      const response = await axios.get('https://glorious-cow-hospital-gown.cyclic.app/recipes');
       setRecipeList(response?.data?.data);
       setIsRefreshing(false);
     } catch (error) {
@@ -71,7 +72,7 @@ function Home(props) {
       }
 
       const response = await axios.get(
-        'http://10.0.2.2:8000/recipes/profile/me',
+        'https://glorious-cow-hospital-gown.cyclic.app/recipes/profile/me',
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -114,7 +115,7 @@ function Home(props) {
 
   const handleSearch = () => {
     axios
-      .get(`http://10.0.2.2:8000/recipes`, {
+      .get(`https://glorious-cow-hospital-gown.cyclic.app/recipes`, {
         params: {
           keyword,
           sortColumn: 'name',
