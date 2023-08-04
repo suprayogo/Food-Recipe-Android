@@ -11,6 +11,13 @@ First, you will need to start **Metro**, the JavaScript _bundler_ that ships _wi
 To start Metro, run the following command from the _root_ of your React Native project:
 
 ```bash
+
+#git clone
+git clone https://github.com/suprayogo/Food-Recipe-Mobile
+
+# instal package
+npm install
+
 # using npm
 npm start
 
@@ -67,6 +74,25 @@ You've successfully run and modified your React Native App. :partying_face:
 # Troubleshooting
 
 If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+
+
+
+
+<!-- RELATED PROJECT -->
+## Related Project
+
+- [Food Recipe API](https://github.com/suprayogo/pijar-food-be-new)
+- [Food Recipe Android](https://github.com/suprayogo/Food-Recipe-Mobile/)
+
+<!-- CONTACT INFO -->
+## Contact Info
+
+Contributors names and contact info:
+
+1. Rizki Suprayogo
+
+- [Linkedin](https://www.linkedin.com/in/rizki-suprayogo/)
+
 
 # Learn More
 
