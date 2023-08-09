@@ -57,13 +57,6 @@ console.log(pickImage);
     <PaperProvider theme={theme}>
 
 
-<Button
-  mode="contained"
-  style={[styles.button, { backgroundColor: '#2DBABC' }]}
-  onPress={pickImage}
->
-  Pick an Image
-</Button>
 
 
 
@@ -87,6 +80,17 @@ console.log(pickImage);
           style={styles.input}
           placeholder="Add Video"
         />
+
+<Button
+  mode="contained"
+  style={[styles.button, { backgroundColor: '#2DBABC', marginBottom: 20 }]}
+  onPress={pickImage}
+>
+  Pick an Image
+</Button>
+
+
+
         <Button
           mode="contained"
           style={[styles.button, { backgroundColor: '#2DBABC' }]}

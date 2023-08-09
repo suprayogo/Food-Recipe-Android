@@ -71,10 +71,14 @@ function Register(props) {
 
   const handleRegister = () => {
     setIsLoading(true);
+    setError(''); // Reset error state before making the request
+  
     if (password !== passwordNew) {
       setError('Passwords do not match');
+      setIsLoading(false); // Stop loading in case of password mismatch
       return;
     }
+  
     axios
       .post('https://glorious-cow-hospital-gown.cyclic.app/auth/register', {
         email: email,
@@ -84,7 +88,7 @@ function Register(props) {
       })
       .then(response => {
         console.log(response?.data?.data[0].id);
-        firestore()
+        return firestore()
           .collection('users')
           .doc(response?.data?.data[0].id.toString())
           .set({
@@ -93,22 +97,13 @@ function Register(props) {
             phoneNumber: phoneNumber,
             email: email,
             password: password,
-          })
-          .then(response => {
-            console.log('user created');
-          })
-          .catch(error => {
-            console.log(error);
           });
-
-        navigation.navigate('Login');
-        setIsLoading(false);
       })
-
       .then(() => {
+        setIsLoading(false); // Stop loading after Firestore operation
         setIsSuccess(true);
+        navigation.navigate('Login');
       })
-      // })
       .catch(err => {
         if (err.response && err.response.data && err.response.data.message) {
           setError(err.response.data.message);
@@ -116,10 +111,11 @@ function Register(props) {
         } else {
           setError('An error occurred');
           console.log(err);
-          setIsLoading(false);
         }
+        setIsLoading(false); // Stop loading in case of error
       });
   };
+  
 
   React.useEffect(() => {
     if (isSuccess) {

@@ -63,36 +63,39 @@ function Login(props) {
   const [isLoading, setIsLoading] = React.useState(false);
 
   
-const handleLogin = () => {
-  setIsLoading(true);
-  axios
-    .post('https://glorious-cow-hospital-gown.cyclic.app/auth/login', {
-      email: email,
-      password: password,
-    })
-    .then(async (res) => {
-      const token = res.data.token;
-      console.log(res.data);
-      await AsyncStorage.setItem('auth', 'true');
-      await AsyncStorage.setItem('token', token);
-      await AsyncStorage.setItem('profile', JSON.stringify(res.data));
-      
-      setIsLoading(false);
-      navigation.navigate('Tabs'); // Navigate to 'Tabs' using the navigationRef
-    })
-    .catch((err) => {
-      setIsLoading(false);
-      if (err.response && err.response.data && err.response.data.message) {
-        if (err.response.data.message) {
-          setError(err.response.data.message);
+  const handleLogin = () => {
+    setIsLoading(true);
+    setError(''); // Reset error state before making the request
+  
+    axios
+      .post('https://glorious-cow-hospital-gown.cyclic.app/auth/login', {
+        email: email,
+        password: password,
+      })
+      .then(async (res) => {
+        const token = res.data.token;
+        console.log(res.data);
+        await AsyncStorage.setItem('auth', 'true');
+        await AsyncStorage.setItem('token', token);
+        await AsyncStorage.setItem('profile', JSON.stringify(res.data));
+        
+        setIsLoading(false);
+        navigation.navigate('Tabs'); // Navigate to 'Tabs' using the navigationRef
+      })
+      .catch((err) => {
+        setIsLoading(false); // Stop loading even in case of error
+        if (err.response && err.response.data && err.response.data.message) {
+          if (err.response.data.message) {
+            setError(err.response.data.message);
+          }
+          console.log(err.response.data.message);
+        } else {
+          setError('Something went wrong with the app');
+          console.log(err);
         }
-        console.log(err.response.data.message);
-      } else {
-        setError('Something wrong app');
-        console.log(err);
-      }
-    });
-};
+      });
+  };
+  
 
   const onChangeEmail = query => setEmail(query);
   const onChangepassword = text => setpassword(text);
