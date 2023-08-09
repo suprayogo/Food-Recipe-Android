@@ -68,17 +68,20 @@ function Register(props) {
   const [error, setError] = React.useState(null);
   const [isSuccess, setIsSuccess] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
+  const [okPressed, setOkPressed] = React.useState(false);
+
 
   const handleRegister = () => {
     setIsLoading(true);
     setError(''); // Reset error state before making the request
-  
+    
     if (password !== passwordNew) {
       setError('Passwords do not match');
       setIsLoading(false); // Stop loading in case of password mismatch
       return;
     }
-  
+    
     axios
       .post('https://glorious-cow-hospital-gown.cyclic.app/auth/register', {
         email: email,
@@ -101,8 +104,9 @@ function Register(props) {
       })
       .then(() => {
         setIsLoading(false); // Stop loading after Firestore operation
-        setIsSuccess(true);
-        navigation.navigate('Login');
+        setIsSuccess(true); // Set isSuccess to true
+        setSnackbarVisible(true);
+     
       })
       .catch(err => {
         if (err.response && err.response.data && err.response.data.message) {
@@ -116,6 +120,14 @@ function Register(props) {
       });
   };
   
+  const onSnackbarDismiss = () => {
+    if (isSuccess) {
+      setSnackbarVisible(false);
+      setOkPressed(true); // Set okPressed to true after dismissing Snackbar
+      navigation.navigate('Login'); // Navigate to login after Snackbar dismissal
+    }
+  };
+
 
   React.useEffect(() => {
     if (isSuccess) {
@@ -340,13 +352,14 @@ function Register(props) {
         </ScrollView>
 
         <View>
-          <Snackbar
-            visible={isSuccess}
-            style={{backgroundColor: '#79C079'}}
-            onDismiss={() => props.navigation.navigate('Login')}
-            duration={1000}>
-            Register success
-          </Snackbar>
+        <Snackbar
+        visible={snackbarVisible && isSuccess && !okPressed}
+        style={{ backgroundColor: '#79C079' }}
+        onDismiss={onSnackbarDismiss}
+        duration={3000}
+      >
+        Registration successful
+      </Snackbar>
 
           <Snackbar
             visible={Boolean(error)}
