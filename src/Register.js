@@ -24,9 +24,8 @@ import {
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import AwesomeIcon from 'react-native-vector-icons/FontAwesome5';
-import { Text,  } from 'react-native-paper';
+import {Text} from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
-
 
 import {
   TextInput,
@@ -55,7 +54,6 @@ function Register(props) {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-
   const [fullname, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [phoneNumber, setPhone] = React.useState('');
@@ -71,8 +69,6 @@ function Register(props) {
   const [isSuccess, setIsSuccess] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
 
-  
-
   const handleRegister = () => {
     setIsLoading(true);
     if (password !== passwordNew) {
@@ -80,7 +76,7 @@ function Register(props) {
       return;
     }
     axios
-    .post('https://glorious-cow-hospital-gown.cyclic.app/auth/register', {
+      .post('https://glorious-cow-hospital-gown.cyclic.app/auth/register', {
         email: email,
         password: password,
         fullname: fullname,
@@ -108,10 +104,10 @@ function Register(props) {
         navigation.navigate('Login');
         setIsLoading(false);
       })
-      
-          .then(() => {
-            setIsSuccess(true);
-          })
+
+      .then(() => {
+        setIsSuccess(true);
+      })
       // })
       .catch(err => {
         if (err.response && err.response.data && err.response.data.message) {
@@ -139,16 +135,14 @@ function Register(props) {
       setIsPasswordNewFocused(false);
       setError(null);
       setIsLoading(false);
-    
     }
   }, [isSuccess]);
 
   const onChangeName = query => setName(query);
   const onChangeEmail = query => setEmail(query);
   const onChangePhone = number => setPhone(number);
-  const onChangepassword = (text) => setpassword(text);
-  const onChangepasswordNew = (text) => setpasswordNew(text);
-
+  const onChangepassword = text => setpassword(text);
+  const onChangepasswordNew = text => setpasswordNew(text);
 
   const handleEmailFocus = () => {
     setIsEmailFocused(true);
@@ -190,21 +184,21 @@ function Register(props) {
     setIsPasswordNewFocused(false);
   };
 
-
   const emailBorderColor = isEmailFocused ? '#2DBABC' : 'transparent';
   const nameBorderColor = isNameFocused ? '#2DBABC' : 'transparent';
   const phoneBorderColor = isPhoneFocused ? '#2DBABC' : 'transparent';
   const passwordBorderColor = isPasswordFocused ? '#2DBABC' : 'transparent';
-  const passwordNewBorderColor = isPasswordNewFocused ? '#2DBABC' : 'transparent';
+  const passwordNewBorderColor = isPasswordNewFocused
+    ? '#2DBABC'
+    : 'transparent';
 
   const iconColorEmail = isEmailFocused ? '#2DBABC' : Colors.grey500;
   const iconColorName = isNameFocused ? '#2DBABC' : Colors.grey500;
   const iconColorPhone = isPhoneFocused ? '#2DBABC' : Colors.grey500;
   const iconColorPassword = isPasswordFocused ? '#2DBABC' : Colors.grey500;
-  const iconColorPasswordNew = isPasswordNewFocused ? '#2DBABC' : Colors.grey500;
-
-
-
+  const iconColorPasswordNew = isPasswordNewFocused
+    ? '#2DBABC'
+    : Colors.grey500;
 
   return (
     <PaperProvider
@@ -218,17 +212,16 @@ function Register(props) {
           backgroundColor={backgroundStyle.backgroundColor}
         />
 
-
-          <ScrollView contentInsetAdjustmentBehavior="automatic" style={backgroundStyle}>
-
-
+        <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
+          style={backgroundStyle}>
           <View
             style={{
               backgroundColor: '#f6f6f9',
               padding: 10,
               paddingBottom: 10,
             }}>
-      <Text
+            <Text
               variant="titleLarge"
               style={{
                 marginBottom: 11,
@@ -237,10 +230,9 @@ function Register(props) {
                 alignSelf: 'center',
                 paddingTop: 100,
               }}>
-  
-Let’s Get Started !
-</Text>
-      <Text
+              Let’s Get Started !
+            </Text>
+            <Text
               variant="bodySmall"
               style={{
                 marginBottom: 50,
@@ -248,15 +240,16 @@ Let’s Get Started !
                 color: '#4C4C4C',
                 alignSelf: 'center',
               }}>
-  
-  Create new account to access all feautures
-</Text>
+              Create new account to access all feautures
+            </Text>
 
-{ <Text style={styles.errorText}>{error}</Text>}
+            {<Text style={styles.errorText}>{error}</Text>}
 
-
-<TextInput
-              style={[styles.input, {borderColor: nameBorderColor, marginBottom:20}]}
+            <TextInput
+              style={[
+                styles.input,
+                {borderColor: nameBorderColor, marginBottom: 20},
+              ]}
               placeholder="Name"
               onChangeText={onChangeName}
               value={fullname}
@@ -265,11 +258,13 @@ Let’s Get Started !
               onFocus={handleNameFocus}
               onBlur={handleNameBlur}
               left={<TextInput.Icon icon="user" color={iconColorName} />}
-        
             />
 
-<TextInput
-              style={[styles.input, {borderColor: emailBorderColor, marginBottom:20}]}
+            <TextInput
+              style={[
+                styles.input,
+                {borderColor: emailBorderColor, marginBottom: 20},
+              ]}
               placeholder="Email"
               onChangeText={onChangeEmail}
               value={email}
@@ -280,8 +275,11 @@ Let’s Get Started !
               left={<TextInput.Icon icon="envelope" color={iconColorEmail} />}
             />
 
-<TextInput
-              style={[styles.input, {borderColor: phoneBorderColor, marginBottom:20}]}
+            <TextInput
+              style={[
+                styles.input,
+                {borderColor: phoneBorderColor, marginBottom: 20},
+              ]}
               placeholder="Phone Number"
               onChangeText={onChangePhone}
               value={phoneNumber}
@@ -292,9 +290,11 @@ Let’s Get Started !
               left={<TextInput.Icon icon="phone" color={iconColorPhone} />}
             />
 
-
-<TextInput
-              style={[styles.input, {borderColor: passwordNewBorderColor, marginBottom:20}]}
+            <TextInput
+              style={[
+                styles.input,
+                {borderColor: passwordNewBorderColor, marginBottom: 20},
+              ]}
               placeholder="Password"
               onChangeText={onChangepasswordNew}
               value={passwordNew}
@@ -302,12 +302,13 @@ Let’s Get Started !
               onFocus={handlePasswordNewFocus}
               onBlur={handlePasswordNewBlur}
               left={<TextInput.Icon icon="lock" color={iconColorPasswordNew} />}
-        
             />
 
-
-<TextInput
-              style={[styles.input, {borderColor: passwordBorderColor,marginBottom:50}]}
+            <TextInput
+              style={[
+                styles.input,
+                {borderColor: passwordBorderColor, marginBottom: 50},
+              ]}
               placeholder="Password New"
               onChangeText={onChangepassword}
               value={password}
@@ -315,12 +316,9 @@ Let’s Get Started !
               onFocus={handlePasswordFocus}
               onBlur={handlePasswordBlur}
               left={<TextInput.Icon icon="unlock" color={iconColorPassword} />}
-        
             />
 
-
-
-<TouchableOpacity
+            <TouchableOpacity
               style={styles.button}
               onPress={handleRegister}
               disabled={isLoading}>
@@ -331,55 +329,46 @@ Let’s Get Started !
               )}
             </TouchableOpacity>
 
-
-
-    <Text
+            <Text
               variant="bodySmall"
               style={{
-              marginTop: 30,
-            marginBottom:40,
+                marginTop: 30,
+                marginBottom: 40,
                 fontSize: 15,
                 color: '#4C4C4C',
                 alignSelf: 'center',
               }}>
-    Already have account?{' '}
-          <Text>
-          Log in Here
-          </Text>
+              Already have account? <Text>Log in Here</Text>
             </Text>
-
-        </View>
+          </View>
         </ScrollView>
-  
+
         <View>
-        <Snackbar
-          visible={isSuccess}
-          style={{backgroundColor: '#79C079'}}
-          onDismiss={() =>  props.navigation.navigate('Login')}
-          duration={1000}>
-          Register success
-        </Snackbar>
+          <Snackbar
+            visible={isSuccess}
+            style={{backgroundColor: '#79C079'}}
+            onDismiss={() => props.navigation.navigate('Login')}
+            duration={1000}>
+            Register success
+          </Snackbar>
 
-        <Snackbar
-          visible={Boolean(error)}
-          style={{backgroundColor: '#CB3837'}}
-          onDismiss={() => setError(null)}
-          action={{
-            label: 'X',
-            onPress: () => {
-              setError(null);
-            },
-          }}>
-          {error}
-        </Snackbar>
-      </View>
-
-
+          <Snackbar
+            visible={Boolean(error)}
+            style={{backgroundColor: '#CB3837'}}
+            onDismiss={() => setError(null)}
+            action={{
+              label: 'X',
+              onPress: () => {
+                setError(null);
+              },
+            }}>
+            {error}
+          </Snackbar>
+        </View>
       </SafeAreaView>
     </PaperProvider>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -393,8 +382,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     marginBottom: 10,
     paddingHorizontal: 10,
-    backgroundColor: "white",
-   
+    backgroundColor: 'white',
+
     borderRadius: 10, // Change the border radius to your desired value
     borderTopLeftRadius: 10, // Add this property to set the top left border radius
     borderTopRightRadius: 10,
@@ -404,8 +393,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#2DBABC',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10, 
-    borderTopLeftRadius: 10, 
+    borderRadius: 10,
+    borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
   buttonText: {

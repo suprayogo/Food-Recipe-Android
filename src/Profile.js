@@ -95,39 +95,42 @@ function Profile(props) {
           }}>
           {/* Header Background */}
           <View
-            style={{
-              flex: 0.8,
-              width: '100%',
-              backgroundColor: '#2DBABC',
-              // backgroundColor: 'gray',
-            }}>
-            <Image
-              source={{uri: profile.profilePicture}}
-              style={{
-                width: 150,
-                height: 150,
-                resizeMode: 'contain',
-                borderRadius: 100,
-                overflow: 'hidden',
-                alignSelf: 'center',
-                marginTop: 40,
-                marginBottom: 30,
-                borderColor: 'white',
-                borderWidth: 3,
-              }}
-            />
-            <Text
-              variant="titleLarge"
-              style={{
-                marginBottom: 7,
-                fontSize: 25,
-                color: 'white',
-                alignSelf: 'center',
-                fontWeight: 'bold',
-              }}>
-              {profile.fullname}
-            </Text>
-          </View>
+  style={{
+    flex: 0.8,
+    width: '100%',
+    backgroundColor: '#2DBABC',
+  }}
+>
+  {profile.profilePicture && (
+    <Image
+      source={{ uri: profile.profilePicture }}
+      style={{
+        width: 150,
+        height: 150,
+        resizeMode: 'contain',
+        borderRadius: 100,
+        overflow: 'hidden',
+        alignSelf: 'center',
+        marginTop: 40,
+        marginBottom: 30,
+        borderColor: 'white',
+        borderWidth: 3,
+      }}
+    />
+  )}
+  <Text
+    variant="titleLarge"
+    style={{
+      marginBottom: 7,
+      fontSize: 25,
+      color: 'white',
+      alignSelf: 'center',
+      fontWeight: 'bold',
+    }}
+  >
+    {profile.fullname}
+  </Text>
+</View>
           {/* End of Header Background */}
 
           {/* Main Content */}

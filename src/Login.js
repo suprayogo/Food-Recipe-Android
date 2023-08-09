@@ -52,7 +52,7 @@ function Login(props) {
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
-    backgroundColor: isDarkMode ? '#2DBABC' : '#2DBABC',
+    backgroundColor: isDarkMode ? '#2DBABC' : 'white',
   };
 
   const [email, setEmail] = React.useState('');

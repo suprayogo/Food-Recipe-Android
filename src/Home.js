@@ -24,9 +24,12 @@ import {
 } from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {Searchbar, Text, Avatar, Card, Button} from 'react-native-paper';
+import { useSelector } from 'react-redux';
 
 function Home(props) {
   const {navigation} = props;
+  const state = useSelector((state) => state)
+  console.log(state)
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
@@ -282,7 +285,7 @@ function Home(props) {
           {/* Recipe  your */}
           <View>
             <Text variant="labelLarge" style={{fontSize: 20, marginBottom: 15}}>
-              Your Recipes
+          My Recipe
             </Text>
 
             {isLoadingData ? (

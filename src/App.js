@@ -9,14 +9,20 @@ import Profile from './Profile';
 import Register from './Register';
 import Tabs from './navigation/Tabs';
 import DetailChat from './DetailChat';
-
-
+import { Provider } from "react-redux";
+import { store } from './store';
+import { PersistGate } from "redux-persist/integration/react";
+import { persistStore } from "redux-persist";
 
 const Stack = createStackNavigator();
 const navigationRef = React.createRef(); // Create the navigationRef
 
 function App() {
+  let persistor = persistStore(store);
+
   return (
+    <Provider store={store}>
+    <PersistGate loading={null} persistor={persistor}>
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator
         initialRouteName="Tabs"
@@ -31,6 +37,8 @@ function App() {
         <Stack.Screen name="DetailChat" component={DetailChat} />
       </Stack.Navigator>
     </NavigationContainer>
+    </PersistGate>
+    </Provider>
   );
 }
 
