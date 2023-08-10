@@ -13,16 +13,18 @@ import { Provider } from "react-redux";
 import { store } from './store';
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
+import Toast from 'react-native-toast-message';
 
 const Stack = createStackNavigator();
 const navigationRef = React.createRef(); // Create the navigationRef
 
-function App() {
+function App(props) {
   let persistor = persistStore(store);
 
   return (
     <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
+
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator
         initialRouteName="Tabs"
@@ -37,6 +39,7 @@ function App() {
         <Stack.Screen name="DetailChat" component={DetailChat} />
       </Stack.Navigator>
     </NavigationContainer>
+    <Toast />
     </PersistGate>
     </Provider>
   );

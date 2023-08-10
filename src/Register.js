@@ -337,17 +337,31 @@ function Register(props) {
               )}
             </TouchableOpacity>
 
-            <Text
-              variant="bodySmall"
-              style={{
-                marginTop: 30,
-                marginBottom: 40,
-                fontSize: 15,
-                color: '#4C4C4C',
-                alignSelf: 'center',
-              }}>
-              Already have account? <Text>Log in Here</Text>
-            </Text>
+           <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+              <Text
+                variant="bodySmall"
+                style={{
+                  marginBottom: 30,
+                  marginTop:10,
+                  fontSize: 15,
+                  color: '#4C4C4C',
+                  alignSelf: 'center',
+                }}>
+             Already have account? {' '}
+              </Text>
+              <TouchableOpacity onPress={() => props.navigation.navigate('Login')}>
+                <Text
+                  variant="bodySmall"
+                  style={{
+                    marginBottom: 30,
+                    marginTop:10,
+                    fontSize: 15,
+                    alignSelf: 'center',
+                  }}>
+              Log in Here
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </ScrollView>
 

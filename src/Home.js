@@ -24,14 +24,12 @@ import {
 } from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {Searchbar, Text, Avatar, Card, Button} from 'react-native-paper';
-import { useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {setToken} from './store/slice/auth.slice';
 
 function Home(props) {
   const {navigation} = props;
-  const state = useSelector((state) => state)
-  console.log(state)
   const isDarkMode = useColorScheme() === 'dark';
-
   const backgroundStyle = {
     backgroundColor: isDarkMode ? '#2DBABC' : Colors.lighter,
   };
@@ -45,15 +43,18 @@ function Home(props) {
   }
   const [recipeList, setRecipeList] = React.useState([]);
   const [recipeCreated_by, setRecipeCreated_by] = React.useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const isLoggedIn = useSelector(state => state.auth.token !== ''); // Get the login status from Redux state
+  const dispatch = useDispatch();
 
   // Custom function to fetch recipes
   const fetchRecipes = async () => {
     try {
-     
-      const response = await axios.get('https://glorious-cow-hospital-gown.cyclic.app/recipes');
+      const response = await axios.get(
+        'https://glorious-cow-hospital-gown.cyclic.app/recipes',
+      );
       setRecipeList(response?.data?.data);
       setIsRefreshing(false);
     } catch (error) {
@@ -66,46 +67,44 @@ function Home(props) {
   // Custom function to fetch user recipes
   const fetchUserRecipes = async () => {
     try {
+      setIsLoadingData(true);
       const token = await AsyncStorage.getItem('token');
       if (!token) {
-        // User is not logged in, skip API call
-        setIsLoggedIn(false);
-        setIsLoadingData(false); // Set loading to false since we don't need to fetch data
-        return;
-      }
-
-      const response = await axios.get(
-        'https://glorious-cow-hospital-gown.cyclic.app/recipes/profile/me',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        dispatch(setToken('')); // Dispatch action to update token (log out)
+      } else {
+        dispatch(setToken(token)); // Dispatch action to update token (log in)
+        const response = await axios.get(
+          'https://glorious-cow-hospital-gown.cyclic.app/recipes/profile/me',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        },
-      );
-
-      setRecipeCreated_by(response.data?.data);
-      setIsLoggedIn(true); // User is logged in
-      setIsLoadingData(false); // Data has been fetched, set loading to false
+        );
+        setRecipeCreated_by(response.data?.data);
+      }
+      setIsLoadingData(false);
     } catch (error) {
       console.error('Error fetching user recipe by users:', error);
-      setIsLoadingData(false); // Set loading to false in case of an error
+      setIsLoadingData(false);
     }
   };
 
-  // Function to refresh data when pulled down
   const handleRefresh = () => {
-    setIsRefreshing(true);
-    // Fetch recipes again
-    fetchRecipes();
-    // Fetch user recipes again
-    fetchUserRecipes();
+    if (isLoggedIn) {
+      setIsRefreshing(true);
+      // Fetch recipes again
+      fetchRecipes();
+      // Fetch user recipes again
+      fetchUserRecipes();
+    }
   };
 
   useEffect(() => {
     const retrieveToken = async () => {
       try {
         const token = await AsyncStorage.getItem('token');
-        setIsLoggedIn(token !== null);
+        dispatch(setToken(token || '')); // Dispatch action to update token
       } catch (error) {
         console.error('Error retrieving token:', error);
       }
@@ -114,7 +113,7 @@ function Home(props) {
     retrieveToken();
     fetchRecipes();
     fetchUserRecipes();
-  }, []);
+  }, [dispatch]);
 
   const handleSearch = () => {
     axios
@@ -285,7 +284,7 @@ function Home(props) {
           {/* Recipe  your */}
           <View>
             <Text variant="labelLarge" style={{fontSize: 20, marginBottom: 15}}>
-          My Recipe
+              My Recipe
             </Text>
 
             {isLoadingData ? (
@@ -294,66 +293,90 @@ function Home(props) {
                 color="#2DBABC"
                 style={{marginTop: 20}}
               />
-            ) : isLoggedIn ? (
-              <ScrollView horizontal>
-                {recipeCreated_by.slice(0, 6).map((recipe, key) => (
-                  <TouchableOpacity
-                    key={key}
-                    onPress={() =>
-                      navigation.navigate('DetailRecipe', {
-                        recipeInfoAll: recipe,
-                      })
-                    }>
-                    <Card
-                      style={{
-                        width: 250,
-                        marginRight: 15,
-                        padding: 5,
-                        paddingBottom: 10,
-                      }}
-                      key={key}>
-                      <Card.Cover
-                        source={{uri: recipe.recipePicture}}
-                        style={{
-                          height: 150,
-                          objectFit: 'cover',
-                          borderRadius: 0,
-                        }}
-                      />
-                      <Card.Content style={{paddingTop: 10, paddingBottom: 10}}>
-                        <Text variant="titleLarge" style={{color: 'black'}}>
-                          {recipe.title}
-                        </Text>
-                      </Card.Content>
-                    </Card>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
             ) : (
               <>
-                <Card>
-                  <Card.Content>
-                    <Text
-                      variant="titleMedium"
-                      style={{
-                        marginTop: 10,
-                        alignSelf: 'center',
-                      }}>
-                      You must be logged in to view this section
+                {isLoggedIn ? (
+                  recipeCreated_by.length > 0 ? (
+                    <ScrollView horizontal>
+                 {recipeCreated_by.slice(0, 6).map((recipe, key) => (
+  <TouchableOpacity
+    key={key}
+    onPress={() =>
+      navigation.navigate('DetailRecipe', {
+        recipeInfoAll: recipe,
+      })
+    }>
+ <ImageBackground
+                    source={{uri: recipe.recipePicture}}
+                    // resizeMode="cover"
+                    style={{
+                      height: 150,
+                      justifyContent: 'flex-end',
+                      padding: 10,
+                      width: 250,
+                      marginRight: 10,
+                      marginBottom: 10,
+                    }}
+                    imageStyle={{
+                      borderRadius: 6,
+                      resizeMode: 'cover',
+                      position: 'absolute',
+                      top: 0,
+                    }}>
+                    <View>
+                      <Text
+                        variant="titleLarge"
+                        style={{
+                          color: '#fff',
+                          textShadowColor: 'rgba(0, 0, 0, 0.85)',
+                          textShadowOffset: {width: -2, height: 2},
+                          textShadowRadius: 10,
+                          borderRadius: 10,
+                          alignSelf: 'flex-start',
+                          width:
+                            recipe.title.length > 10
+                              ? 140
+                              : recipe.title.length * 10,
+                          lineHeight: recipe.title.length > 10 ? 25 : undefined,
+                        }}
+                        numberOfLines={2}>
+                        {recipe.title}
+                      </Text>
+                    </View>
+                  </ImageBackground>
+  </TouchableOpacity>
+))}
+                    </ScrollView>
+                  ) : (
+                    <Text style={{textAlign: 'center', marginTop: 20}}>
+                      You don't have any recipes yet
                     </Text>
+                  )
+                ) : (
+                  <Card>
+                    <Card.Content>
+                      <Text
+                        variant="titleMedium"
+                        style={{
+                          marginTop: 10,
+                          alignSelf: 'center',
+                        }}>
+                        You must be logged in to view this section
+                      </Text>
 
-                    <Button
-                      mode="contained"
-                      onPress={() => navigation.navigate('Login')}
-                      style={{
-                        marginTop: 10,
-                        alignSelf: 'center',
-                        backgroundColor: '#2DBABC',
-                      }}>
-                      Login
-                    </Button>
-                  </Card.Content>
-                </Card>
+                      <Button
+                        mode="contained"
+                        onPress={() => navigation.navigate('Login')}
+                        style={{
+                          marginTop: 10,
+                          alignSelf: 'center',
+                          backgroundColor: '#2DBABC',
+                        }}>
+                        Login
+                      </Button>
+                    </Card.Content>
+                  </Card>
+                )}
               </>
             )}
           </View>

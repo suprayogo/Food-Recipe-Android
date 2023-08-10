@@ -12,6 +12,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 import { navigationRef } from './App'; 
+import { useDispatch, useSelector } from 'react-redux';
+import { addAuth } from './store/slice/auth.slice';
 
 import {
   SafeAreaView,
@@ -33,6 +35,9 @@ import {
   Provider as PaperProvider,
   DefaultTheme,
 } from 'react-native-paper';
+import { setToken, setUser } from './store/slice/auth.slice';
+import Toast from 'react-native-toast-message';
+
 
 const theme = {
   ...DefaultTheme,
@@ -61,8 +66,13 @@ function Login(props) {
   const [isEmailFocused, setIsEmailFocused] = React.useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
-
+  const authData = useSelector(state => state.auth);
+  const token = authData.token;
+  const user = authData.user;
   
+  const dispatch = useDispatch();
+  
+ 
   const handleLogin = () => {
     setIsLoading(true);
     setError(''); // Reset error state before making the request
@@ -74,12 +84,23 @@ function Login(props) {
       })
       .then(async (res) => {
         const token = res.data.token;
-        console.log(res.data);
+        const user = res.data.data[0];
+        // console.log(user);
+        
+        dispatch(setToken(token)); // Menyimpan token ke Redux state
+        // dispatch(authSlice.actions.setUser(user));
+        dispatch(setUser(user));
         await AsyncStorage.setItem('auth', 'true');
         await AsyncStorage.setItem('token', token);
         await AsyncStorage.setItem('profile', JSON.stringify(res.data));
-        
+  
         setIsLoading(false);
+        Toast.show({
+          type: 'success', // Tentukan tipe pesan (berhasil)
+          text1: 'Login Success', // Tampilkan pesan keberhasilan
+          visibilityTime: 2000, // Set durasi tampil pesan (ms)
+        });
+
         navigation.navigate('Tabs'); // Navigate to 'Tabs' using the navigationRef
       })
       .catch((err) => {
