@@ -159,13 +159,35 @@ function Home(props) {
           }>
           {/* Popular Recipes */}
           <View style={{marginBottom: 35}}>
+          <View style={styles.newRecipeTitle}>
+
+
             <Text variant="labelLarge" style={{fontSize: 20}}>
-              Recipes
+              New Recipes
             </Text>
-            <Text
+
+            <TouchableOpacity
+                style={{
+                  width: 50,
+                  height: 15,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginRight: 10,
+                }}
+                onPress={() => {
+                  navigation.navigate('AllRecipe', { recipeInfoAll: recipeList  });
+                }}>
+
+               <Text style={{color: '#6D61F2'}}>More</Text>
+
+               </TouchableOpacity>
+
+
+         </View>   
+         <Text
               variant="labelSmall"
               style={{fontSize: 13, fontWeight: 200, marginBottom: 10}}>
-        Swipe right for all recipes
+       Swipe right to see the recipe
             </Text>
             <ScrollView horizontal>
               {recipeList.slice(0, 3).map((recipe, key) => (

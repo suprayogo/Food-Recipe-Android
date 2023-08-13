@@ -9,8 +9,9 @@ import {
   StyleSheet,
   TextInput,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
-
+import { Snackbar } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
 import {useSelector} from 'react-redux';
@@ -19,7 +20,9 @@ function AllRecipe({route, navigation}) {
   const [showSearch, setShowSearch] = useState(false);
   const [likedItems, setLikedItems] = useState([]);
   const [searchText, setSearchText] = useState('');
-  const [loading, setLoading] = useState(true); // State untuk menunjukkan loading
+  const [loading, setLoading] = useState(true); 
+  const isLoggedIn = useSelector(state => state.auth.isLoggedIn); 
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
   const setRecipeInfoAll = route.params?.recipeInfoAll;
   const token = useSelector(state => state.auth.token);
 
@@ -56,6 +59,11 @@ function AllRecipe({route, navigation}) {
   };
 
   const fetchLikeStatus = async id => {
+    if (!isLoggedIn) {
+        setSnackbarVisible(true); // Show Snackbar
+        return;
+      }
+  
     try {
       const response = await axios.get(
         `https://glorious-cow-hospital-gown.cyclic.app/recipes/${id}/status`,
@@ -65,7 +73,7 @@ function AllRecipe({route, navigation}) {
           },
         },
       );
-
+  
       if (response.data.isLiked) {
         setLikedItems(prevLikedItems => [...prevLikedItems, id]);
       }
@@ -73,14 +81,24 @@ function AllRecipe({route, navigation}) {
       console.error('Error fetching like status:', error.message);
     }
   };
+  
+
+  React.useEffect(() => {
+    if (snackbarVisible) {
+      setTimeout(() => {
+        setSnackbarVisible(false);
+      }, 4000);
+    }
+  }, [snackbarVisible]);
+
 
   React.useEffect(() => {
     const recipeIdsToCheck = setRecipeInfoAll.map(item => item.id);
 
     const fetchLikeStatusForAll = async () => {
-      setLoading(true); // Menampilkan loading saat fetch status like
+      setLoading(true); 
       await Promise.all(recipeIdsToCheck.map(id => fetchLikeStatus(id)));
-      setLoading(false); // Menyembunyikan loading setelah selesai fetching
+      setLoading(false); 
     };
 
     fetchLikeStatusForAll();
@@ -91,29 +109,35 @@ function AllRecipe({route, navigation}) {
     setSearchText('');
   };
 
-  const renderItem = ({item}) => {
+
+  const renderItem = ({ item }) => {
     if (
       searchText &&
       !item.title.toLowerCase().includes(searchText.toLowerCase())
     ) {
       return null;
     }
-
+  
     const isLiked = likedItems.includes(item.id);
+   
+  
     return (
       <TouchableOpacity
         style={styles.recipeItemContainer}
         onPress={() =>
-          navigation.navigate('DetailRecipe', {recipeInfoAll: item})
-        }>
-        <Image source={{uri: item.recipePicture}} style={styles.recipeImage} />
+          navigation.navigate('DetailRecipe', { recipeInfoAll: item })
+        }
+      >
+        <Image source={{ uri: item.recipePicture }} style={styles.recipeImage} />
         <Text style={styles.recipeName}>{item.title}</Text>
-        <Icon
-          name="heart"
-          size={30}
-          color={isLiked ? '#2DBABC' : 'gray'}
-          onPress={() => toggleLike(item.id)}
-        />
+        {isLoggedIn && (
+          <Icon
+            name="heart"
+            size={30}
+            color={isLiked ? '#2DBABC' : 'gray'}
+            onPress={() => toggleLike(item.id)}
+          />
+        )}
       </TouchableOpacity>
     );
   };
@@ -121,15 +145,17 @@ function AllRecipe({route, navigation}) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
+      
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButton}>
           <Icon name="chevron-left" size={20} color="#2DBABC" />
         </TouchableOpacity>
-        <Text style={styles.headerText}>All Recipes</Text>
+        <Text style={styles.headerText}>New Recipes</Text>
         <TouchableOpacity onPress={toggleSearch} style={styles.searchButton}>
           <Icon name="search" size={20} color="#2DBABC" />
         </TouchableOpacity>
+        
       </View>
       {showSearch && (
         <View style={styles.searchBar}>
@@ -139,7 +165,9 @@ function AllRecipe({route, navigation}) {
             value={searchText}
             onChangeText={text => setSearchText(text)}
           />
+          
         </View>
+        
       )}
       {loading ? (
         <ActivityIndicator
@@ -154,7 +182,17 @@ function AllRecipe({route, navigation}) {
           keyExtractor={item => item.id.toString()}
         />
       )}
+      <Snackbar
+  visible={snackbarVisible}
+  onDismiss={() => setSnackbarVisible(false)}
+
+  style={{ backgroundColor: 'red' }}
+>
+You need to be logged in to see the like status of a recipe
+</Snackbar>
+
     </View>
+    
   );
 }
 

@@ -278,12 +278,27 @@ export default function Post() {
               outlineColor={'#7abec1'}
               activeOutlineColor="#2DBABC"
             />
+
+<TextInput
+              style={styles.input}
+              placeholder="Category"
+              placeholderTextColor="#7abec1"
+              keyboardType="default"
+              underlineColor="transparent"
+              theme={{roundness: 10}}
+              value={category}
+              onChangeText={value => setCategory(value)}
+              mode="outlined"
+              outlineColor={'#7abec1'}
+              activeOutlineColor="#2DBABC"
+            />
+
             <Text style={{color: '#2DBABC', marginLeft: 20, marginBottom: 5}}>
-              Please include a comma followed by a space for each ingredient.
+            Please end a period (.) for each recipe and follow a space for each ingredient.
             </Text>
             <TextInput
               style={styles.input2}
-              placeholder="Ingredients"
+              placeholder={`Examples of Ingredients:\n 1 ons gula.\n 10 gram cabai. \n 5 gram tomat.`}
               placeholderTextColor="#7abec1"
               keyboardType="default"
               underlineColor="transparent"
@@ -308,19 +323,7 @@ export default function Post() {
               outlineColor={'#7abec1'}
               activeOutlineColor="#2DBABC"
             />
-            <TextInput
-              style={styles.input}
-              placeholder="Category"
-              placeholderTextColor="#7abec1"
-              keyboardType="default"
-              underlineColor="transparent"
-              theme={{roundness: 10}}
-              value={category}
-              onChangeText={value => setCategory(value)}
-              mode="outlined"
-              outlineColor={'#7abec1'}
-              activeOutlineColor="#2DBABC"
-            />
+          
 
             <Text style={styles.textAdd}>Add Image</Text>
             {recipePicture && (
