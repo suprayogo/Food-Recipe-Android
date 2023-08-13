@@ -9,14 +9,19 @@ import Profile from './Profile';
 import Register from './Register';
 import Tabs from './navigation/Tabs';
 import DetailChat from './DetailChat';
+import AllRecipe from './AllRecipe'; 
 import { Provider } from "react-redux";
 import { store } from './store';
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
 import Toast from 'react-native-toast-message';
 
+
+
 const Stack = createStackNavigator();
 const navigationRef = React.createRef(); // Create the navigationRef
+
+
 
 function App(props) {
   let persistor = persistStore(store);
@@ -37,6 +42,7 @@ function App(props) {
         <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="ChatScreen" component={ChatScreen} />
         <Stack.Screen name="DetailChat" component={DetailChat} />
+        <Stack.Screen name="AllRecipe" component={AllRecipe} />
       </Stack.Navigator>
     </NavigationContainer>
     <Toast />

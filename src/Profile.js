@@ -14,35 +14,10 @@ function Profile(props) {
   {
     /*  Intergrasi of start */
   }
-
-  React.useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const token = await AsyncStorage.getItem('token');
-        const response = await axios.get('https://glorious-cow-hospital-gown.cyclic.app/token', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        setProfile(response.data?.data);
-      } catch (error) {
-        console.error('Error fetching user:', error);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
-  {
-    /*  Intergrasi of End */
-  }
-
   useEffect(() => {
     const retrieveToken = async () => {
       try {
         const token = await AsyncStorage.getItem('token');
-        // console.log(token);
         setIsLoggedIn(token !== null);
       } catch (error) {
         console.error('Error retrieving token:', error);
@@ -51,6 +26,37 @@ function Profile(props) {
 
     retrieveToken();
   }, []);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (!isLoggedIn) {
+        console.log('You need to login first.');
+        return;
+      }
+
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await axios.get('https://glorious-cow-hospital-gown.cyclic.app/token', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
+        setProfile(response.data?.data);
+      } catch (error) {
+        if (error.response) {
+          console.error('Error fetching user - Response:', error.response);
+          console.log('Error data:', error.response.data);
+          console.log('Error status:', error.response.status);
+          console.log('Error headers:', error.response.headers);
+        } else {
+          console.error('Error fetching user:', error);
+        }
+      }
+    };
+
+    fetchUser();
+  }, [isLoggedIn]);
 
   
   const handleLogout = async () => {
@@ -112,7 +118,7 @@ function Profile(props) {
         overflow: 'hidden',
         alignSelf: 'center',
         marginTop: 40,
-        marginBottom: 30,
+        marginBottom: 20,
         borderColor: 'white',
         borderWidth: 3,
       }}
@@ -167,19 +173,7 @@ function Profile(props) {
                 />
               </View>
 
-              <View>
-                <List.Item
-                  title="Saved Recipe"
-                  left={props => (
-                    <List.Icon
-                      {...props}
-                      icon="notebook-check"
-                      color="#2DBABC"
-                    />
-                  )}
-                  right={props => <List.Icon {...props} icon="chevron-right" />}
-                />
-              </View>
+   
 
               <View>
                 <List.Item

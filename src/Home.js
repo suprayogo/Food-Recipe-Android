@@ -26,6 +26,7 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {Searchbar, Text, Avatar, Card, Button} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 import {setToken} from './store/slice/auth.slice';
+import { foodData } from './AllRecipe';
 
 function Home(props) {
   const {navigation} = props;
@@ -159,15 +160,15 @@ function Home(props) {
           {/* Popular Recipes */}
           <View style={{marginBottom: 35}}>
             <Text variant="labelLarge" style={{fontSize: 20}}>
-              Popular Recipes
+              Recipes
             </Text>
             <Text
               variant="labelSmall"
               style={{fontSize: 13, fontWeight: 200, marginBottom: 10}}>
-              Populer check
+        Swipe right for all recipes
             </Text>
             <ScrollView horizontal>
-              {recipeList.slice(0, 9).map((recipe, key) => (
+              {recipeList.slice(0, 3).map((recipe, key) => (
                 <TouchableOpacity
                   key={key}
                   onPress={() =>
@@ -221,8 +222,7 @@ function Home(props) {
                   marginRight: 10,
                 }}
                 onPress={() => {
-                  // Handle the action when the right arrow is pressed
-                  // You can navigate to a different screen or perform any other action
+                  navigation.navigate('AllRecipe', { recipeInfoAll: recipeList  });
                 }}>
                 <Icon name="arrow-circle-right" size={30} color="#505050" />
               </TouchableOpacity>
@@ -247,33 +247,33 @@ function Home(props) {
               }}>
               <View>
                 <Avatar.Image
-                  size={80}
+                  size={60}
                   source={require('./assets/icon.png')}
-                  style={{borderRadius: 20, backgroundColor: '#57ce96'}}
+                  // style={{borderRadius: 20, backgroundColor: '#57ce96'}}
                 />
                 <Text style={{textAlign: 'center', marginTop: 5}}>Soup</Text>
               </View>
               <View>
                 <Avatar.Image
-                  size={80}
+                  size={60}
                   source={require('./assets/icon2.png')}
-                  style={{borderRadius: 20, backgroundColor: '#fde901'}}
+                  // style={{borderRadius: 20, backgroundColor: '#fde901'}}
                 />
                 <Text style={{textAlign: 'center', marginTop: 5}}>Chicken</Text>
               </View>
               <View>
                 <Avatar.Image
-                  size={80}
+                  size={60}
                   source={require('./assets/icon.png')}
-                  style={{borderRadius: 20, backgroundColor: '#57ce96'}}
+                  // style={{borderRadius: 20, backgroundColor: '#57ce96'}}
                 />
                 <Text style={{textAlign: 'center', marginTop: 5}}>Seafood</Text>
               </View>
               <View>
                 <Avatar.Image
-                  size={80}
+                  size={60}
                   source={require('./assets/icon2.png')}
-                  style={{borderRadius: 20, backgroundColor: '#fde901'}}
+                  // style={{borderRadius: 20, backgroundColor: '#fde901'}}
                 />
                 <Text style={{textAlign: 'center', marginTop: 5}}>Dessert</Text>
               </View>
