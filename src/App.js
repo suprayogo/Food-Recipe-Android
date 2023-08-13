@@ -10,6 +10,7 @@ import Register from './Register';
 import Tabs from './navigation/Tabs';
 import DetailChat from './DetailChat';
 import AllRecipe from './AllRecipe'; 
+import SearchResultPage from './SearchResultPage';
 import { Provider } from "react-redux";
 import { store } from './store';
 import { PersistGate } from "redux-persist/integration/react";
@@ -43,6 +44,7 @@ function App(props) {
         <Stack.Screen name="ChatScreen" component={ChatScreen} />
         <Stack.Screen name="DetailChat" component={DetailChat} />
         <Stack.Screen name="AllRecipe" component={AllRecipe} />
+        <Stack.Screen name="SearchResultPage" component={SearchResultPage} />
       </Stack.Navigator>
     </NavigationContainer>
     <Toast />

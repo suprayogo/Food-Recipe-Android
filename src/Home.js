@@ -26,7 +26,8 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {Searchbar, Text, Avatar, Card, Button} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 import {setToken} from './store/slice/auth.slice';
-import { foodData } from './AllRecipe';
+import SearchResultPage from './SearchResultPage';
+
 
 function Home(props) {
   const {navigation} = props;
@@ -35,16 +36,20 @@ function Home(props) {
     backgroundColor: isDarkMode ? '#2DBABC' : Colors.lighter,
   };
 
-  const [searchQuery, setSearchQuery] = React.useState('');
 
-  const onChangeSearch = query => setSearchQuery(query);
 
+  const onChangeSearch = query => {
+    setSearchQuery(query);
+    // Panggil fungsi handleSearch disini dengan query sebagai parameter
+    handleSearch(query);
+  };
   {
     /*Intergrasi database START*/
   }
   const [recipeList, setRecipeList] = React.useState([]);
   const [recipeCreated_by, setRecipeCreated_by] = React.useState([]);
-
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [isSearching, setIsSearching] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const isLoggedIn = useSelector(state => state.auth.token !== ''); // Get the login status from Redux state
@@ -101,6 +106,8 @@ function Home(props) {
     }
   };
 
+
+
   useEffect(() => {
     const retrieveToken = async () => {
       try {
@@ -116,15 +123,35 @@ function Home(props) {
     fetchUserRecipes();
   }, [dispatch]);
 
+ 
   const handleSearch = () => {
+    if (searchQuery.trim() === '') {
+      return; // Jangan melakukan pencarian jika query kosong
+    }
+    performSearch();
+  };
+
+  const performSearch = () => {
+    setIsSearching(true);
     axios
       .get(`https://glorious-cow-hospital-gown.cyclic.app/recipes`, {
         params: {
-          keyword,
+          keyword: searchQuery,
           sortColumn: 'name',
         },
       })
-      .then(response => setRecipeList(response?.data?.data));
+      .then(response => {
+        setIsSearching(false);
+        const searchResults = response?.data?.data;
+        // Lakukan navigasi hanya ketika tombol pencarian ditekan
+        if (searchQuery.trim() !== '') {
+          navigation.navigate('SearchResultPage', { searchResults });
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching recipes:', error.message);
+        setIsSearching(false);
+      });
   };
 
   {
@@ -141,11 +168,13 @@ function Home(props) {
             paddingBottom: 0,
           }}>
           <Searchbar
-            placeholder="Search Pasta, Bread, etc"
-            onChangeText={onChangeSearch}
-            value={searchQuery}
-            style={{backgroundColor: '#DDDDDD', marginBottom: 20}}
-          />
+        placeholder="Search Pasta, Bread, etc"
+        onChangeText={text => setSearchQuery(text)}
+        value={searchQuery}
+        style={{ backgroundColor: '#DDDDDD', marginBottom: 20 }}
+        onSubmitEditing={handleSearch}
+      />
+
         </View>
 
         <ScrollView
