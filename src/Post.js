@@ -310,9 +310,16 @@ export default function Post() {
               outlineColor={'#7abec1'}
               activeOutlineColor="#2DBABC"
             />
+
+<Text style={{ color: '#2DBABC', marginLeft: 20, marginBottom: 5 }}>
+        Copy the link from youtube and copy the id like the yellow text :{' '}
+        https://www.youtube.com/watch?v=
+        <Text style={{ backgroundColor: 'yellow' }}>3VjwogzQSD8</Text>
+      </Text>
+
             <TextInput
               style={styles.input}
-              placeholder="Link Video"
+              placeholder="Example link id YouTube: 3VjwogzQSD8"
               placeholderTextColor="#7abec1"
               keyboardType="default"
               underlineColor="transparent"
@@ -323,6 +330,7 @@ export default function Post() {
               outlineColor={'#7abec1'}
               activeOutlineColor="#2DBABC"
             />
+          
           
 
             <Text style={styles.textAdd}>Add Image</Text>

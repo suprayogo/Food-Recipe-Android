@@ -1,78 +1,82 @@
 /* eslint-disable prettier/prettier */
 import React, {useEffect, useState} from 'react';
-import {Text, List, Button} from 'react-native-paper';
+import {Text, List, Button, ActivityIndicator} from 'react-native-paper';
 import {View, ScrollView, StyleSheet, Image} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import {CommonActions} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
 
 function Profile(props) {
   const {navigation} = props;
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [profile, setProfile] = React.useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const token = useSelector(state => state.auth.token);
 
-  {
-    /*  Intergrasi of start */
-  }
-  useEffect(() => {
-    const retrieveToken = async () => {
-      try {
-        const token = await AsyncStorage.getItem('token');
-        setIsLoggedIn(token !== null);
-      } catch (error) {
-        console.error('Error retrieving token:', error);
-      }
-    };
 
-    retrieveToken();
-  }, []);
+
 
   useEffect(() => {
     const fetchUser = async () => {
-      if (!isLoggedIn) {
-        console.log('You need to login first.');
-        return;
-      }
-
       try {
-        const token = await AsyncStorage.getItem('token');
-        const response = await axios.get('https://glorious-cow-hospital-gown.cyclic.app/token', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        if (token) {
+          const response = await axios.get(
+            'https://glorious-cow-hospital-gown.cyclic.app/token',
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          );
   
-        setProfile(response.data?.data);
-      } catch (error) {
-        if (error.response) {
-          console.error('Error fetching user - Response:', error.response);
-          console.log('Error data:', error.response.data);
-          console.log('Error status:', error.response.status);
-          console.log('Error headers:', error.response.headers);
+          console.log('User data response:', response.data);
+          setProfile(response.data?.data);
+  
+          // Tambahkan baris berikut untuk mengatur isLoggedIn menjadi true
+          setIsLoggedIn(true);
         } else {
-          console.error('Error fetching user:', error);
+          console.log('Token does not exist, user is likely logged out.');
+          setProfile(null);
         }
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          console.log('Unauthorized, handleLogout will be called.');
+          handleLogout();
+        }
+        console.error('Error fetching user:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
-
-    fetchUser();
-  }, [isLoggedIn]);
-
   
+    fetchUser();
+  }, [token]);
+
   const handleLogout = async () => {
     try {
       await AsyncStorage.clear();
-      setIsLoggedIn(false);
 
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Home' }], // Replace 'Home' with the initial route of your bottom tab navigator
-      });
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{name: 'Home'}], // Replace 'Home' with the initial route of your bottom tab navigator
+        }),
+      );
     } catch (error) {
       console.error('Error clearing AsyncStorage:', error);
     }
   };
 
+  if (isLoading) {
+    return (
+      <ActivityIndicator
+        style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
+        size="large"
+        color="#2DBABC"
+      />
+    );
+  }
 
   return (
     <>
@@ -101,42 +105,40 @@ function Profile(props) {
           }}>
           {/* Header Background */}
           <View
-  style={{
-    flex: 0.8,
-    width: '100%',
-    backgroundColor: '#2DBABC',
-  }}
->
-  {profile.profilePicture && (
-    <Image
-      source={{ uri: profile.profilePicture }}
-      style={{
-        width: 150,
-        height: 150,
-        resizeMode: 'contain',
-        borderRadius: 100,
-        overflow: 'hidden',
-        alignSelf: 'center',
-        marginTop: 40,
-        marginBottom: 20,
-        borderColor: 'white',
-        borderWidth: 3,
-      }}
-    />
-  )}
-  <Text
-    variant="titleLarge"
-    style={{
-      marginBottom: 7,
-      fontSize: 25,
-      color: 'white',
-      alignSelf: 'center',
-      fontWeight: 'bold',
-    }}
-  >
-    {profile.fullname}
-  </Text>
-</View>
+            style={{
+              flex: 0.8,
+              width: '100%',
+              backgroundColor: '#2DBABC',
+            }}>
+            {profile.profilePicture && (
+              <Image
+                source={{uri: profile.profilePicture}}
+                style={{
+                  width: 150,
+                  height: 150,
+                  resizeMode: 'contain',
+                  borderRadius: 100,
+                  overflow: 'hidden',
+                  alignSelf: 'center',
+                  marginTop: 40,
+                  marginBottom: 20,
+                  borderColor: 'white',
+                  borderWidth: 3,
+                }}
+              />
+            )}
+            <Text
+              variant="titleLarge"
+              style={{
+                marginBottom: 7,
+                fontSize: 25,
+                color: 'white',
+                alignSelf: 'center',
+                fontWeight: 'bold',
+              }}>
+              {profile.fullname}
+            </Text>
+          </View>
           {/* End of Header Background */}
 
           {/* Main Content */}
@@ -153,15 +155,14 @@ function Profile(props) {
               padding: 20,
             }}>
             <ScrollView>
-              <View>
-                <List.Item
-                  title="Edit Profile"
-                  left={props => (
-                    <List.Icon {...props} icon="account" color="#2DBABC" />
-                  )}
-                  right={props => <List.Icon {...props} icon="chevron-right" />}
-                />
-              </View>
+            <View>
+  <List.Item
+    title="Edit Profile"
+    left={props => <List.Icon {...props} icon="account" color="#2DBABC" />}
+    right={props => <List.Icon {...props} icon="chevron-right" />}
+    onPress={() => props.navigation.navigate('EditProfile')} 
+  />
+</View>
 
               <View>
                 <List.Item
@@ -173,7 +174,7 @@ function Profile(props) {
                 />
               </View>
 
-   
+        
 
               <View>
                 <List.Item

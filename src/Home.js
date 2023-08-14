@@ -400,7 +400,7 @@ function Home(props) {
                     </ScrollView>
                   ) : (
                     <Text style={{textAlign: 'center', marginTop: 20}}>
-                      You don't have any recipes yet
+                 You don't have a recipe yet, let's make one
                     </Text>
                   )
                 ) : (

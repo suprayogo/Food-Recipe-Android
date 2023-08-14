@@ -11,6 +11,7 @@ import Tabs from './navigation/Tabs';
 import DetailChat from './DetailChat';
 import AllRecipe from './AllRecipe'; 
 import SearchResultPage from './SearchResultPage';
+import EditProfile from './EditProfile';
 import { Provider } from "react-redux";
 import { store } from './store';
 import { PersistGate } from "redux-persist/integration/react";
@@ -45,6 +46,7 @@ function App(props) {
         <Stack.Screen name="DetailChat" component={DetailChat} />
         <Stack.Screen name="AllRecipe" component={AllRecipe} />
         <Stack.Screen name="SearchResultPage" component={SearchResultPage} />
+        <Stack.Screen name="EditProfile" component={EditProfile} />
       </Stack.Navigator>
     </NavigationContainer>
     <Toast />

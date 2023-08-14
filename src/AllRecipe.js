@@ -21,7 +21,7 @@ function AllRecipe({route, navigation}) {
   const [likedItems, setLikedItems] = useState([]);
   const [searchText, setSearchText] = useState('');
   const [loading, setLoading] = useState(true); 
-  const isLoggedIn = useSelector(state => state.auth.isLoggedIn); 
+  const isLoggedIn = useSelector(state => state.auth.token); 
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const setRecipeInfoAll = route.params?.recipeInfoAll;
   const token = useSelector(state => state.auth.token);
@@ -132,8 +132,8 @@ function AllRecipe({route, navigation}) {
         <Text style={styles.recipeName}>{item.title}</Text>
         {isLoggedIn && (
           <Icon
-            name="heart"
-            size={30}
+            name="thumbs-up"
+            size={35}
             color={isLiked ? '#2DBABC' : 'gray'}
             onPress={() => toggleLike(item.id)}
           />
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     marginRight: 10,
-    borderRadius: 35,
+    borderRadius: 15,
   },
   recipeName: {
     flex: 1,

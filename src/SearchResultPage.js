@@ -1,25 +1,17 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-function SearchResultPage({route, navigation}) {
-  const {searchResults} = route.params;
+function SearchResultPage({ route, navigation }) {
+  const { searchResults } = route.params;
 
-  const renderItem = ({item}) => (
+  const renderItem = ({ item }) => (
     <View style={styles.recipeItemContainer}>
       <TouchableOpacity
         style={styles.recipeItemContainer}
-        onPress={() =>
-          navigation.navigate('DetailRecipe', {recipeInfoAll: item})
-        }>
-        <Image source={{uri: item.recipePicture}} style={styles.recipeImage} />
+        onPress={() => navigation.navigate('DetailRecipe', { recipeInfoAll: item })}
+      >
+        <Image source={{ uri: item.recipePicture }} style={styles.recipeImage} />
         <Text style={styles.recipeTitle}>{item.title}</Text>
       </TouchableOpacity>
     </View>
@@ -32,13 +24,17 @@ function SearchResultPage({route, navigation}) {
           <Icon name="arrow-left" size={24} color="#2DBABC" />
         </TouchableOpacity>
         <Text style={styles.title}>Search Results</Text>
-        <View style={{width: 24}}></View>
+        <View style={{ width: 24 }}></View>
       </View>
-      <FlatList
-        data={searchResults}
-        renderItem={renderItem}
-        keyExtractor={item => item.id.toString()}
-      />
+      {searchResults.length === 0 ? (
+        <Text style={styles.notFoundText}>Recipes Not Found</Text>
+      ) : (
+        <FlatList
+          data={searchResults}
+          renderItem={renderItem}
+          keyExtractor={item => item.id.toString()}
+        />
+      )}
     </View>
   );
 }
@@ -80,6 +76,12 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: '#333',
+  },
+  notFoundText: {
+    alignSelf: 'center',
+    marginTop: 20,
+    fontSize: 18,
+    color: '#888',
   },
 });
 
