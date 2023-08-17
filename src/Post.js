@@ -17,6 +17,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
+import {Picker} from '@react-native-picker/picker';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {Button, TextInput} from 'react-native-paper';
 import {PERMISSIONS, request} from 'react-native-permissions';
@@ -26,7 +27,8 @@ export default function Post() {
   const [title, setTittle] = useState('');
   const [ingredients, setIngredients] = useState('');
   const [video_link, setVideoLink] = useState('');
-  const [category, setCategory] = useState('');
+  const [id_category, setCategory] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
   const [recipePicture, setRecipePicture] = useState(null);
   const auth = useSelector(state => state?.auth);
   const navigation = useNavigation();
@@ -91,9 +93,9 @@ export default function Post() {
         takeImage();
       } else if (granted === PermissionsAndroid.RESULTS.DENIED) {
         console.log('Camera permission denied');
-        const tryAgain = await showRetryDialog();//try again camera
+        const tryAgain = await showRetryDialog();
         if (tryAgain) {
-          requestCameraPermission(); 
+          requestCameraPermission();
         } else {
           console.log('User chose not to try again');
         }
@@ -105,7 +107,7 @@ export default function Post() {
     }
   };
 
-//for ask camera again
+  //for ask camera again
   const showRetryDialog = async () => {
     return new Promise(resolve => {
       Alert.alert(
@@ -178,7 +180,7 @@ export default function Post() {
         Alert.alert('Ingredients cant be empty');
       } else if (video_link === '') {
         Alert.alert('Video Link cant be empty');
-      } else if (category === '') {
+      } else if (selectedCategory === '') {
         Alert.alert('Category cant be empty');
       } else if (recipePicture === null) {
         Alert.alert('Image cant be empty');
@@ -191,50 +193,61 @@ export default function Post() {
         phoxtoFormat !== 'image/webp'
       ) {
         Alert.alert('Image format must be jpeg or png or jpg or webp');
-      }
-      const token = auth?.token;
+      } else {
+        const token = auth?.token;
 
-      const formData = new FormData();
-      formData.append('title', title);
-      formData.append('ingredients', ingredients);
-      formData.append('video_link', video_link);
-      formData.append('category', category);
-      formData.append('photo', {
-        uri: recipePicture,
-        type: 'image/jpeg',
-        name: 'image',
-      });
+        // Validasi lainnya selesai, membuat categoryObj berdasarkan selectedCategory
+        const selectedCategoryObj = categories.find(
+          category => category.id === selectedCategory,
+        );
 
-      console.log(formData);
-      await axios
-        .post(
-          `https://glorious-cow-hospital-gown.cyclic.app/recipes`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'multipart/form-data',
+        if (selectedCategoryObj) {
+          const id_category = selectedCategoryObj.id;
+          console.log(id_category);
+
+          const formData = new FormData();
+          formData.append('title', title);
+          formData.append('ingredients', ingredients);
+          formData.append('video_link', video_link);
+          formData.append('id_category', id_category.toString());
+          formData.append('photo', {
+            uri: recipePicture,
+            type: 'image/jpeg',
+            name: 'image',
+          });
+
+          console.log(formData);
+
+          const response = await axios.post(
+            `https://glorious-cow-hospital-gown.cyclic.app/recipes`,
+            formData,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data',
+              },
             },
-          },
-        )
+          );
 
-        .then(res => {
-          setRecipePicture(null);
-          setTittle('');
-          setIngredients('');
-          setVideoLink('');
-          setCategory('');
-          setNewPhoztoChosen(false);
-          if (res.data.message === 'Success insert data') {
+          if (response.data.message === 'Success insert data') {
+            setRecipePicture(null);
+            setTittle('');
+            setIngredients('');
+            setVideoLink('');
+            setSelectedCategory('');
+            setNewPhoztoChosen(false);
             navigation.navigate('Home');
+            scrollViewRef.current.scrollTo({x: 0, y: 0, animated: true});
           }
-          scrollViewRef.current.scrollTo({x: 0, y: 0, animated: true});
-        });
+        } else {
+          console.log('Selected category not found');
+        }
+      }
     } catch (error) {
       console.log('Error while adding recipe:', error);
 
       if (error.response) {
-        // console.log('Response data:', error.response.data);
+        console.log('Response data:', error.response.data);
         // console.log('Response status:', error.response.status);
         // console.log('Response headers:', error.response.headers);
         console.log('-------');
@@ -244,6 +257,18 @@ export default function Post() {
       setLoading(false);
     }
   };
+
+  const categories = [
+    {id: 1, name: 'Chicken'},
+    {id: 2, name: 'Noodles'},
+    {id: 3, name: 'Rice'},
+    {id: 4, name: 'Meat'},
+    {id: 5, name: 'Seafood'},
+    {id: 6, name: 'Drink'},
+    {id: 7, name: 'Vegetables'},
+    {id: 8, name: 'Cake'},
+  
+  ];
 
   useEffect(() => {
     if (!auth.token) {
@@ -279,22 +304,24 @@ export default function Post() {
               activeOutlineColor="#2DBABC"
             />
 
-<TextInput
-              style={styles.input}
-              placeholder="Category"
-              placeholderTextColor="#7abec1"
-              keyboardType="default"
-              underlineColor="transparent"
-              theme={{roundness: 10}}
-              value={category}
-              onChangeText={value => setCategory(value)}
-              mode="outlined"
-              outlineColor={'#7abec1'}
-              activeOutlineColor="#2DBABC"
-            />
+            <View style={styles.inputContainer}>
+              <Picker
+                selectedValue={selectedCategory}
+                onValueChange={itemValue => setSelectedCategory(itemValue)}
+                style={styles.picker}>
+                <Picker.Item label="Select a category" value="" key="default" />
+                {categories.map(category => (
+                  <Picker.Item
+                    key={category.id.toString()}
+                    label={category.name}
+                    value={category.id}
+                  />
+                ))}
+              </Picker>
+            </View>
 
             <Text style={{color: '#2DBABC', marginLeft: 20, marginBottom: 5}}>
-            Please end a period (.) for each recipe and follow a space for each ingredient.
+              Please end a period (.) in ingredients.
             </Text>
             <TextInput
               style={styles.input2}
@@ -311,11 +338,11 @@ export default function Post() {
               activeOutlineColor="#2DBABC"
             />
 
-<Text style={{ color: '#2DBABC', marginLeft: 20, marginBottom: 5 }}>
-        Copy the link from youtube and copy the id like the yellow text :{' '}
-        https://www.youtube.com/watch?v=
-        <Text style={{ backgroundColor: 'yellow' }}>3VjwogzQSD8</Text>
-      </Text>
+            <Text style={{color: '#2DBABC', marginLeft: 20, marginBottom: 5}}>
+              Copy the link from youtube and copy the id like the yellow text :{' '}
+              https://www.youtube.com/watch?v=
+              <Text style={{backgroundColor: 'yellow'}}>3VjwogzQSD8</Text>
+            </Text>
 
             <TextInput
               style={styles.input}
@@ -330,8 +357,6 @@ export default function Post() {
               outlineColor={'#7abec1'}
               activeOutlineColor="#2DBABC"
             />
-          
-          
 
             <Text style={styles.textAdd}>Add Image</Text>
             {recipePicture && (
@@ -379,7 +404,7 @@ export default function Post() {
               title="Submit Recipe"
               disabled={loading}
               onPress={handleAdd}>
-             {loading ? (
+              {loading ? (
                 <ActivityIndicator size="small" color="white" />
               ) : (
                 <Text style={styles.buttonText}>Add Recipe</Text>
@@ -475,5 +500,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#7abec1',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    marginTop: 10,
+    marginLeft: 10,
+    marginRight: 10,
+    marginBottom: 10,
+    height: 50,
+  },
+  picker: {
+    flex: 1,
+  },
+  selectedCategoryText: {
+    flex: 1,
+    color: '#7abec1',
+    paddingHorizontal: 10,
   },
 });
