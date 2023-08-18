@@ -15,8 +15,6 @@ function Profile(props) {
   const token = useSelector(state => state.auth.token);
 
 
-
-
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -29,11 +27,14 @@ function Profile(props) {
               },
             },
           );
-  
+          if (props.route.params?.updatedProfileData) {
+            setProfile(props.route.params.updatedProfileData);
+            console.log("TESTTSTSTSTTSTS",props.route.params?.updatedProfileData?.data);
+          }
+          
           console.log('User data response:', response.data);
+          setIsLoading(true); 
           setProfile(response.data?.data);
-  
-          // Tambahkan baris berikut untuk mengatur isLoggedIn menjadi true
           setIsLoggedIn(true);
         } else {
           console.log('Token does not exist, user is likely logged out.');
@@ -51,7 +52,7 @@ function Profile(props) {
     };
   
     fetchUser();
-  }, [token]);
+  },  [token, props.route.params?.updatedProfileData, ]);
 
   const handleLogout = async () => {
     try {
@@ -160,7 +161,7 @@ function Profile(props) {
     title="Edit Profile"
     left={props => <List.Icon {...props} icon="account" color="#2DBABC" />}
     right={props => <List.Icon {...props} icon="chevron-right" />}
-    onPress={() => props.navigation.navigate('EditProfile')} 
+    onPress={() => props.navigation.navigate('EditProfile', { profileData: profile })}
   />
 </View>
 

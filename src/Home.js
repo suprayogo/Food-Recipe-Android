@@ -321,7 +321,7 @@ function Home(props) {
               {!showAllIcons && categories.length > 3 && (
   <TouchableOpacity
     onPress={() => setShowAllIcons(true)}>
-    <Text style={{color: '#6D61F2'}}>Show All</Text>
+    <Text style={{color: '#6D61F2'}}>More</Text>
   </TouchableOpacity>
 )}
 

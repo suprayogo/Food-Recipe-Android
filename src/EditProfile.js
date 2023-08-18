@@ -1,37 +1,137 @@
 import React, {useState} from 'react';
 import {
-  View,
-  Text,
-  ScrollView,
   Image,
-  TouchableOpacity,
+  ScrollView,
   StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Alert,
 } from 'react-native';
-import {TextInput, Button} from 'react-native-paper';
+import {launchImageLibrary} from 'react-native-image-picker';
+import {Button, TextInput} from 'react-native-paper';
+import axios from 'axios';
+import {useSelector} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
 
-export default function EditProfile() {
-    const [fullname, setFullname] = React.useState(profile?.fullname || "");
-    const [email, setEmail] = React.useState(profile?.email || "");
-    const [phoneNumber, setPhoneNumber] = React.useState(
-      profile?.phoneNumber || ""
-    );
-    const [password, setPassword] = React.useState("");
-  const [profilePicture, setProfilePicture] = useState(null);
+function EditProfile({route}) {
+  const {profileData} = route.params;
 
-  const handleSaveChanges = () => {
-    // Implement saving changes logic here
+  console.log('Received profile data:', profileData);
+
+  const [fullname, setFullname] = React.useState(profileData?.fullname || '');
+  const [email, setEmail] = React.useState(profileData?.email || '');
+  const [phoneNumber, setPhoneNumber] = React.useState(
+    profileData?.phoneNumber || '',
+  );
+  const [password, setPassword] = React.useState('');
+  const [selectedFile, setSelectedFile] = useState(
+    profileData?.profilePicture || null,
+  );
+  const navigation = useNavigation();
+  const token = useSelector(state => state.auth.token);
+
+  const handleSaveChanges = async () => {
+    if (!token) {
+      console.error('Tidak ada token ditemukan. Pengguna belum terotentikasi.');
+      return;
+    }
+
+    try {
+      const profileResponse = await axios.patch(
+        `https://glorious-cow-hospital-gown.cyclic.app/profile`,
+        {
+          fullname,
+          email,
+          phoneNumber,
+          password,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+
+      console.log('Profil berhasil diedit:', profileResponse.data);
+
+      if (selectedFile) {
+        const formData = new FormData();
+        formData.append('photo', {
+          uri: selectedFile.uri,
+          type: selectedFile.type,
+          name: selectedFile.fileName,
+        });
+
+        try {
+          const photoResponse = await axios.patch(
+            `https://glorious-cow-hospital-gown.cyclic.app/profile/photo`,
+            formData,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data',
+              },
+            },
+          );
+
+          console.log('Foto profil berhasil diubah:', photoResponse.data);
+        } catch (photoError) {
+          console.error('Error saat mengubah foto profil:', photoError);
+        }
+      }
+
+      navigation.navigate('Tabs', {
+        screen: 'Profile',
+        params: {updatedProfileData: profileResponse.data},
+      });
+    } catch (error) {
+      console.error('Error saat mengedit profil:', error);
+    }
   };
 
-  const chooseProfilePicture = () => {
-    // Implement profile picture selection logic here
+ 
+const chooseProfilePicture = () => {
+  const options = {
+    mediaType: 'photo',
+    includeBase64: false,
+    quality: 1,
   };
+
+  launchImageLibrary(options, response => {
+    if (response.didCancel) {
+      console.log('User cancelled image picker');
+    } else if (response.error) {
+      console.log('ImagePicker Error: ', response.error);
+    } else if (response.assets && response.assets.length > 0) {
+      const selectedAsset = response.assets[0];
+
+      // Check if selected image exceeds 2MB
+      if (selectedAsset.fileSize > 2 * 1024 * 1024) {
+        // Display an error message using Alert
+        Alert.alert(
+          'Error',
+          'Selected image size exceeds 2MB. Please choose a smaller image.',
+          [{ text: 'OK' }]
+        );
+        return;
+      }
+
+      setSelectedFile(selectedAsset);
+    }
+  });
+};
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Edit Profile</Text>
       <TouchableOpacity onPress={chooseProfilePicture}>
-        {profilePicture ? (
-          <Image source={{uri: profilePicture}} style={styles.profilePicture} />
+        {selectedFile && selectedFile.uri ? (
+          <Image
+            source={{uri: selectedFile.uri}}
+            style={styles.profilePicture}
+          />
         ) : (
           <View style={styles.placeholder}>
             <Text style={styles.placeholderText}>Choose Profile Picture</Text>
@@ -52,6 +152,49 @@ export default function EditProfile() {
         outlineColor={'#7abec1'}
         activeOutlineColor="#2DBABC"
       />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        placeholderTextColor="#7abec1"
+        keyboardType="default"
+        underlineColor="transparent"
+        theme={{roundness: 10}}
+        value={email}
+        onChangeText={value => setEmail(value)}
+        mode="outlined"
+        outlineColor={'#7abec1'}
+        activeOutlineColor="#2DBABC"
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Phone"
+        placeholderTextColor="#7abec1"
+        keyboardType="default"
+        underlineColor="transparent"
+        theme={{roundness: 10}}
+        value={phoneNumber}
+        onChangeText={value => setPhoneNumber(value)}
+        mode="outlined"
+        outlineColor={'#7abec1'}
+        activeOutlineColor="#2DBABC"
+      />
+{/* 
+      <TextInput
+        style={styles.input}
+        placeholder="Change password if you want "
+        placeholderTextColor="#7abec1"
+        keyboardType="default"
+        underlineColor="transparent"
+        theme={{roundness: 10}}
+        value={password}
+        onChangeText={value => setPassword(value)}
+        mode="outlined"
+        outlineColor={'#7abec1'}
+        activeOutlineColor="#2DBABC"
+        secureTextEntry={true}
+      /> */}
 
       <Button
         mode="contained"
@@ -108,3 +251,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+export default EditProfile;
