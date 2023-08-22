@@ -76,6 +76,42 @@ You've successfully run and modified your React Native App. :partying_face:
 If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
 
 
+# Screen Shoot
+
+### Login
+<img src="./readme/login.jpg" />
+
+### Register
+<img src="./readme/register.jpg" />
+
+### Landing
+<img src="./readme/home.jpg" />
+
+
+### Detail Recipe
+<img src="./readme/detail.jpg" />
+
+
+### Add Recipe
+<img src="./readme/post.jpg" />
+
+### Profile
+<img src="./readme/profile.jpg" />
+
+### Category
+<img src="./readme/kategori.jpg" />
+
+### All Menu
+<img src="./readme/all.jpg" />
+
+### Chat
+<img src="./readme/Chat.jpg" />
+
+
+
+
+
+
 
 
 <!-- RELATED PROJECT -->
