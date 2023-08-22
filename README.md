@@ -78,35 +78,17 @@ If you can't get this to work, see the [Troubleshooting](https://reactnative.dev
 
 # Screen Shoot
 
-### Login
-<img src="./readme/login.jpg" />
-
-### Register
-<img src="./readme/register.jpg" />
-
-### Landing
-<img src="./readme/home.jpg" />
-
-
-### Detail Recipe
-<img src="./readme/detail.jpg" />
-
-
-### Add Recipe
-<img src="./readme/post.jpg" />
-
-### Profile
-<img src="./readme/profile.jpg" />
-
-### Category
-<img src="./readme/kategori.jpg" />
-
-### All Menu
-<img src="./readme/all.jpg" />
-
-### Chat
-<img src="./readme/Chat.jpg" />
-
+| Halaman | Tangkapan Layar |
+| ------- | --------------- |
+| Login | ![Login](./readme/login.jpg) |
+| Register | ![Register](./readme/register.jpg) |
+| Landing | ![Landing](./readme/home.jpg) |
+| Detail Recipe | ![Detail Recipe](./readme/detail.jpg) |
+| Add Recipe | ![Add Recipe](./readme/post.jpg) |
+| Profile | ![Profile](./readme/profile.jpg) |
+| Category | ![Category](./readme/kategori.jpg) |
+| All Menu | ![All Menu](./readme/all.jpg) |
+| Chat | ![Chat](./readme/Chat.jpg) |
 
 
 
