@@ -78,18 +78,17 @@ If you can't get this to work, see the [Troubleshooting](https://reactnative.dev
 
 # Screen Shoot
 
-| Halaman | Tangkapan Layar |
+| Screen | ScreenShoot |
 | ------- | --------------- |
-| Login | ![Login](./readme/login.jpg) |
-| Register | ![Register](./readme/register.jpg) |
-| Landing | ![Landing](./readme/home.jpg) |
-| Detail Recipe | ![Detail Recipe](./readme/detail.jpg) |
-| Add Recipe | ![Add Recipe](./readme/post.jpg) |
-| Profile | ![Profile](./readme/profile.jpg) |
-| Category | ![Category](./readme/kategori.jpg) |
-| All Menu | ![All Menu](./readme/all.jpg) |
-| Chat | ![Chat](./readme/Chat.jpg) |
-
+| Login | <img src="./readme/login.jpg" width="200" /> |
+| Register | <img src="./readme/register.jpg" width="200" /> |
+| Landing | <img src="./readme/home.jpg" width="200" /> |
+| Detail Recipe | <img src="./readme/detail.jpg" width="200" /> |
+| Add Recipe | <img src="./readme/post.jpg" width="200" /> |
+| Profile | <img src="./readme/profile.jpg" width="200" /> |
+| Category | <img src="./readme/kategori.jpg" width="200" /> |
+| All Menu | <img src="./readme/all.jpg" width="200" /> |
+| Chat | <img src="./readme/Chat.jpg" width="200" /> |
 
 
 
